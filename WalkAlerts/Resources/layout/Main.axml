@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10px">
+    <TextView
+        android:text="When prompted by the game, press Connect to search for the game to connect the companion app."
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_marginBottom="100px" />
+    <Button
+        android:text="Connect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/connectButton"
+        android:contentDescription="Connect to Game"
+        android:layout_marginBottom="100px" />
+    <TextView
+        android:text="WiFi Info:"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/internetInfo"
+        android:layout_gravity="bottom"
+        android:layout_weight="0" />
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/infoString"
+        android:text="@string/info_string"
+        android:layout_gravity="bottom"
+        android:layout_weight="1" />
+</LinearLayout>
