@@ -26,10 +26,12 @@ namespace WalkAlerts
         private readonly object lockList = new object();
         private bool messageReceived;
         private string ipString;
+        private string udpString;
         private string portString;
         private EditText portEditText;
         private EditText ipEditText;
         private ISharedPreferences preferences;
+        private EditText udpEditText;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -47,6 +49,9 @@ namespace WalkAlerts
 
             portEditText = FindViewById<EditText>(Resource.Id.portEditText);
             portEditText.Text = preferences.GetString("port", "3000");
+
+            udpEditText = FindViewById<EditText>(Resource.Id.udpEditText);
+            udpEditText.Text = preferences.GetString("updAddress", "239.255.42.99");
 
             Button connectButton = FindViewById<Button>(Resource.Id.connectButton);
             connectButton.Click += ConnectToServer;
@@ -68,9 +73,8 @@ namespace WalkAlerts
             };
 
             adapter.ItemClick += OnItemClick;
-
             recyclerView.SetAdapter(adapter);
-            BeginSearch();
+            //BeginSearch();
         }
 
         public void ConnectToServer(Object sender, EventArgs e)
@@ -81,10 +85,12 @@ namespace WalkAlerts
             if (portEditText == null)
                 return;
 
-            String ipString = ipEditText.Text.ToString();
+            ipString = ipEditText.Text.ToString();
             String portStr = portEditText.Text.ToString();
+            udpString = udpEditText.Text.ToString();
 
             IPAddress.TryParse(ipString, out IPAddress ip);
+            IPAddress.TryParse(udpString, out IPAddress udpip);
 
             if (ip == null)
             {
@@ -96,10 +102,16 @@ namespace WalkAlerts
                 Toast.MakeText(ApplicationContext, "Port not correct. Try again...", ToastLength.Short).Show();
                 return;
             }
+            if (udpip == null)
+            {
+                Toast.MakeText(ApplicationContext, "UDP IP Address not correct. Try again...", ToastLength.Short).Show();
+                return;
+            }
 
             ISharedPreferencesEditor preferencesEditor = preferences.Edit();
             preferencesEditor.PutString("ipAddress", ipString);
             preferencesEditor.PutString("port", portStr);
+            preferencesEditor.PutString("udpAddress", udpString);
             preferencesEditor.Apply();
 
             Intent intent = new Intent(this, typeof(AlertActivity));
@@ -124,7 +136,9 @@ namespace WalkAlerts
 
         public void AutoConnectToServer()
         {
+            String udpStr = udpEditText.Text.ToString();
             IPAddress.TryParse(ipString, out IPAddress ip);
+            IPAddress.TryParse(udpStr, out IPAddress udp);
 
             if (ip == null)
             {
@@ -132,7 +146,13 @@ namespace WalkAlerts
                 return;
             }
 
-            if(portString == null)
+            if (udp == null)
+            {
+                Toast.MakeText(Application.Context, "Inncorect UDP IP Address Format. Try Again...", ToastLength.Long).Show();
+                return;
+            }
+
+            if (portString == null)
             {
                 Toast.MakeText(Application.Context, "Inncorect Port Format. Try Again...", ToastLength.Long).Show();
                 return;
@@ -144,6 +164,7 @@ namespace WalkAlerts
             ISharedPreferencesEditor preferencesEditor = preferences.Edit();
             preferencesEditor.PutString("ipAddress", ipString);
             preferencesEditor.PutString("port", portString);
+            preferencesEditor.PutString("udpAddress", udpStr);
             preferencesEditor.Apply();
 
             Intent intent = new Intent(this, typeof(AlertActivity));
@@ -155,6 +176,7 @@ namespace WalkAlerts
         #region Server Code
         private void BeginSearch()
         {
+            udpString = udpEditText.Text.ToString();
             serverList.Clear();
             adapter.items = serverList;
             adapter.NotifyDataSetChanged();
@@ -203,8 +225,18 @@ namespace WalkAlerts
         public void ReceiveMessages()
         {
             messageReceived = false;
+            if (!IPAddress.TryParse(udpString, out IPAddress udpIP))
+            {
+                using (var h = new Handler(Looper.MainLooper))
+                {
+                    h.Post(() => {
+                        Toast.MakeText(Application.Context, "Inncorect UDP IP Address Format. Try Again...", ToastLength.Long).Show();
+                    });
+                }
+                return;
+            }
             // Receive a message and write it to the console.
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, listenPort);
+            IPEndPoint endPoint = new IPEndPoint(udpIP, listenPort);
             UdpClient client = new UdpClient(endPoint);
 
             UdpState state = new UdpState

@@ -10,11 +10,14 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading.Tasks;
 using Android.Views.Accessibility;
+using Android.Media;
+using Android.Content.Res;
+using Android.Graphics;
 
 namespace WalkAlerts
 {
     [Activity(Label = "Game Play", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait)]
-    public class AlertActivity : Activity, View.IOnTouchListener, View.IOnHoverListener
+    public class AlertActivity : Activity
     {
         // The port number for the remote device.
         private static int port;
@@ -22,6 +25,9 @@ namespace WalkAlerts
         private static Socket sender;
         private static Vibrator vibrator;
         private AccessibilityManager accessibilityManager;
+        private MediaPlayer mediaPlayer;
+        private LinearLayout mainView;
+        private TextView alertText;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -56,11 +62,21 @@ namespace WalkAlerts
 
             vibrator = (Vibrator)GetSystemService(VibratorService);
 
-            View v = FindViewById(Resource.Id.clickerView);
-            v.SetOnTouchListener(this);
-            v.SetOnHoverListener(this);
-            v.ImportantForAccessibility = ImportantForAccessibility.No;
+            mainView = FindViewById<LinearLayout>(Resource.Id.clickerView);
+            alertText = FindViewById<TextView>(Resource.Id.alertText);
 
+            //Load the Prohibitive Sound Assets
+            try
+            {
+                AssetFileDescriptor afd = Assets.OpenFd("loseSound.wav");
+                mediaPlayer = new MediaPlayer();
+                mediaPlayer.SetDataSource(afd.FileDescriptor, afd.StartOffset, afd.Length);
+                mediaPlayer.Prepare();
+            }
+            catch(Exception e) {
+                Console.WriteLine("Prohibitive Alert sound file error: " + e);
+            };
+            
         }
 
         protected override void OnStart()
@@ -113,14 +129,13 @@ namespace WalkAlerts
                         h.Post(() => {
                             Toast.MakeText(Application.Context, "Connected to Game", ToastLength.Long).Show();
                             TextView text = FindViewById<TextView>(Resource.Id.connectString);
-                            text.Text = "Connected";
-                            text.ContentDescription = "Connected";
+                            text.Visibility = ViewStates.Gone;
                         });
                     }
                     
                     Console.WriteLine("Socket connected to {0}", sender.RemoteEndPoint.ToString());
                     //vibrator.Vibrate(pattern: new Int64[]{ 0, 200, 200, 200, 200, 200, 200}, repeat: -1);
-                    vibrator.Vibrate(VibrationEffect.CreateOneShot(200, 400));
+                    //vibrator.Vibrate(VibrationEffect.CreateOneShot(200, 400));
                     // An incoming connection needs to be processed.
                     while (true)
                     {
@@ -130,7 +145,7 @@ namespace WalkAlerts
                             int bytesRec = sender.Receive(bytes);
                             if(bytesRec != 0)
                             {
-                                string data = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                                string data = System.Text.Encoding.ASCII.GetString(bytes, 0, bytesRec);
                                 Console.WriteLine("Received {0}", data);
                                 ProcessMessage(data);
                             }
@@ -176,21 +191,31 @@ namespace WalkAlerts
         /// <param name="message"></param>
         private void ProcessMessage(string message)
         {
-            if (message.Equals("wall;"))
+            if (message.Contains("PROHIBITIVEALERT;"))
             {
-                //vibrator.Vibrate(100);
-                vibrator.Vibrate(VibrationEffect.CreateOneShot(100,400));
-            }
-            else if (message.Equals("ball;"))
-            {
-                //vibrator.Vibrate(300);
-                vibrator.Vibrate(VibrationEffect.CreateOneShot(300, 400));
-            }
-            else
-            {
-                vibrator.Vibrate(VibrationEffect.CreateOneShot(100, 400));
+                ReceivedProhibAlert();
             }
         }
+
+        private void ReceivedProhibAlert()
+        {
+            RunOnUiThread(async () =>
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                vibrator.Vibrate(400); //Vibrate is deprecated, but VibrationEffect didn't work
+#pragma warning restore CS0618 // Type or member is obsolete
+                mediaPlayer.Start();
+                mainView.SetBackgroundColor(Color.Red);
+                alertText.Text = GetString(Resource.String.prohib_text);
+                alertText.Visibility = ViewStates.Visible;
+
+                await Task.Delay(4000);
+                mainView.SetBackgroundColor(Color.Black);
+                alertText.Visibility = ViewStates.Invisible;
+            });
+        }
+
+       
 
         /// <summary>
         /// Sends string messages to connected Server
@@ -201,60 +226,12 @@ namespace WalkAlerts
             if (sender.Connected)
             {
                 // Encode the data string into a byte array.
-                byte[] msg = Encoding.ASCII.GetBytes(message);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(message);
 
                 // Send the data through the socket.
                 int bytesSent = sender.Send(msg);
             }
         }
 
-        /// <summary>
-        /// Send a up and down message to the game with Socket Server
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public bool OnTouch(View v, MotionEvent e)
-        {
-            if(e.Action == MotionEventActions.Down)
-            {
-                Console.WriteLine("DOWN");
-                SendMessage("up;");
-            }
-            if(e.Action == MotionEventActions.Up)
-            {
-                Console.WriteLine("UP");
-                SendMessage("down;");
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Event is trigger onHover and checks if Talkback is running. If Talkback is on, then convert HoverEnter
-        /// and HoverExit to TouchUp and TouchDown. This remove the restraint on double touch to click during Talkback.
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public bool OnHover(View v, MotionEvent e)
-        {
-            if(accessibilityManager.IsTouchExplorationEnabled && e.PointerCount == 1)
-            {
-                var action = e.Action;
-                switch (action)
-                {
-                    case MotionEventActions.HoverEnter:
-                        e.Action = MotionEventActions.Down;
-                        break;
-                    case MotionEventActions.HoverExit:
-                        e.Action = MotionEventActions.Up;
-                        break;
-                }
-                return OnTouch(v,e);
-        }
-
-            return true;
-        }
     }
 }

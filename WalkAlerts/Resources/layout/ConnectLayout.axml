@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
     <TextView
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_width="match_parent"
@@ -16,12 +18,25 @@
         android:layout_height="wrap_content"
         android:id="@+id/autoSearchText"
         android:layout_below="@id/infoString" />
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Multicast Address"
+        android:id="@+id/multiText"
+        android:layout_below="@id/autoSearchText" />
+    <EditText
+        android:inputType="phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/udpEditText"
+        android:layout_below="@id/multiText" />
     <Button
         android:text="Search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/SearchButton"
-        android:layout_below="@id/autoSearchText" />
+        android:layout_below="@id/udpEditText" />
     <TextView
         android:text="Status: "
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -39,7 +54,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="true"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
         <TextView
             android:text="IP Address"
             android:layout_width="match_parent"
