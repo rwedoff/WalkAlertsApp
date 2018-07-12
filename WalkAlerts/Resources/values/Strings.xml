@@ -2,5 +2,7 @@
 <resources>
   <string name="app_name">Walk Alerts</string>
   <string name="info_string">Make sure you are connected to the same network as the game.</string>
-  <string name="prohib_text">Warning!\nNot safe to cross street.</string>
+  <string name="prohib_text">Do not cross!</string>
+  <string name="perv_text">Safe to cross!</string>
+  
 </resources>

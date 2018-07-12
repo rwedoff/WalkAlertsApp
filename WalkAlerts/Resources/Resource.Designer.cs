@@ -81,59 +81,65 @@ namespace WalkAlerts
 			// aapt resource value: 0x7f040001
 			public const int InGameScreen = 2130968577;
 			
-			// aapt resource value: 0x7f04000a
-			public const int SearchButton = 2130968586;
-			
-			// aapt resource value: 0x7f040004
-			public const int alertText = 2130968580;
-			
-			// aapt resource value: 0x7f040007
-			public const int autoSearchText = 2130968583;
-			
-			// aapt resource value: 0x7f040003
-			public const int clickerView = 2130968579;
-			
-			// aapt resource value: 0x7f040005
-			public const int computerButton = 2130968581;
-			
-			// aapt resource value: 0x7f040010
-			public const int connectButton = 2130968592;
-			
-			// aapt resource value: 0x7f040002
-			public const int connectString = 2130968578;
+			// aapt resource value: 0x7f04000c
+			public const int SearchButton = 2130968588;
 			
 			// aapt resource value: 0x7f040006
-			public const int infoString = 2130968582;
+			public const int alertText = 2130968582;
+			
+			// aapt resource value: 0x7f040009
+			public const int autoSearchText = 2130968585;
+			
+			// aapt resource value: 0x7f040005
+			public const int clickerView = 2130968581;
+			
+			// aapt resource value: 0x7f040007
+			public const int computerButton = 2130968583;
 			
 			// aapt resource value: 0x7f040012
-			public const int internetInfo = 2130968594;
+			public const int connectButton = 2130968594;
 			
-			// aapt resource value: 0x7f04000d
-			public const int ipEditText = 2130968589;
+			// aapt resource value: 0x7f040003
+			public const int connectString = 2130968579;
+			
+			// aapt resource value: 0x7f040002
+			public const int connectView = 2130968578;
+			
+			// aapt resource value: 0x7f040008
+			public const int infoString = 2130968584;
+			
+			// aapt resource value: 0x7f040014
+			public const int internetInfo = 2130968596;
+			
+			// aapt resource value: 0x7f04000f
+			public const int ipEditText = 2130968591;
 			
 			// aapt resource value: 0x7f040000
 			public const int item_touch_helper_previous_elevation = 2130968576;
 			
-			// aapt resource value: 0x7f040008
-			public const int multiText = 2130968584;
-			
-			// aapt resource value: 0x7f04000f
-			public const int portEditText = 2130968591;
-			
-			// aapt resource value: 0x7f04000e
-			public const int portTitleText = 2130968590;
-			
-			// aapt resource value: 0x7f04000c
-			public const int serverRecyclerView = 2130968588;
-			
-			// aapt resource value: 0x7f04000b
-			public const int statusText = 2130968587;
+			// aapt resource value: 0x7f04000a
+			public const int multiText = 2130968586;
 			
 			// aapt resource value: 0x7f040011
-			public const int textView1 = 2130968593;
+			public const int portEditText = 2130968593;
 			
-			// aapt resource value: 0x7f040009
-			public const int udpEditText = 2130968585;
+			// aapt resource value: 0x7f040010
+			public const int portTitleText = 2130968592;
+			
+			// aapt resource value: 0x7f040004
+			public const int reConnectButton = 2130968580;
+			
+			// aapt resource value: 0x7f04000e
+			public const int serverRecyclerView = 2130968590;
+			
+			// aapt resource value: 0x7f04000d
+			public const int statusText = 2130968589;
+			
+			// aapt resource value: 0x7f040013
+			public const int textView1 = 2130968595;
+			
+			// aapt resource value: 0x7f04000b
+			public const int udpEditText = 2130968587;
 			
 			static Id()
 			{
@@ -178,6 +184,9 @@ namespace WalkAlerts
 			
 			// aapt resource value: 0x7f050001
 			public const int info_string = 2131034113;
+			
+			// aapt resource value: 0x7f050003
+			public const int perv_text = 2131034115;
 			
 			// aapt resource value: 0x7f050002
 			public const int prohib_text = 2131034114;
